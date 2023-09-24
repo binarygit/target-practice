@@ -64,9 +64,30 @@ class Game
     handle_input
     check_boundary
     print_fireballs
+    print_targets
   end
 
   private
+
+  def print_targets
+    args.state.targets ||= [
+      spawn_target(800, 120),
+      spawn_target(920, 600),
+      spawn_target(1020, 320),
+    ]
+
+    args.outputs.sprites << args.state.targets
+  end
+
+  def spawn_target(x, y)
+    {
+      x: x,
+      y: y,
+      w: 64,
+      h: 64,
+      path: 'sprites/misc/target.png',
+    }
+  end
 
   def print_fireballs
     args.state.fireballs ||= []
@@ -76,7 +97,7 @@ class Game
                                 w: 34, 
                                 h: 34,
                                 path: 'sprites/misc/fireball.png'
-                              }
+      }
     end
 
     args.state.fireballs.each do |fireball|
