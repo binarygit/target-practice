@@ -74,7 +74,7 @@ class Game
     args.state.targets.each do |t|
       args.state.fireballs.each do |f| 
         if t.intersect_rect? f
-          f.kill = true
+          f.dead = true
           t.dead = true 
         end
       end
@@ -112,13 +112,27 @@ class Game
       }
     end
 
-    args.state.fireballs.each do |fireball|
-      fireball.x += args.state.player.speed + 2
-    end
+    increase_fireball_speed
+    kill_offscreen_fireballs
 
     args.state.fireballs.reject! { _1.dead }
     args.outputs.sprites << args.state.fireballs
   end
+
+  def increase_fireball_speed
+    args.state.fireballs.each do |fireball|
+      fireball.x += args.state.player.speed + 2
+    end
+  end
+
+  def kill_offscreen_fireballs
+    args.state.fireballs.each do |fireball|
+      if fireball.x > args.grid.w
+        fireball.dead = true
+      end
+    end
+  end
+
 
   def check_boundary
     if (args.state.player.y + 100) == args.grid.top
@@ -157,3 +171,5 @@ def tick(args)
   game ||= Game.new(args)
   game.tick
 end
+
+# $gtk.reset
