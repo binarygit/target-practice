@@ -51,8 +51,16 @@ class Game
   def tick
     args.state.player_x ||= 120
     args.state.player_y ||= 280
+    args.state.player   ||= {
+      x: 120,
+      y: 280,
+      w: 100,
+      h: 80,
+      speed: 2,
+      path: 'sprites/misc/dragon-0.png'
+    }
 
-    args.outputs.sprites << [args.state.player_x, args.state.player_y, 100, 80, 'sprites/misc/dragon-0.png']
+    args.outputs.sprites << args.state.player
     handle_input
     check_boundary
     print_fireballs
@@ -61,43 +69,52 @@ class Game
   private
 
   def print_fireballs
-    args.state.fireball ||= []
+    args.state.fireballs ||= []
     if args.inputs.keyboard.key_down.z
-      args.state.fireball << [args.state.player_x, args.state.player_y + 40, 'fireball']
+      args.state.fireballs << { x: (args.state.player.x + args.state.player.w) - 12,
+                                y: args.state.player.y + 10,
+                                w: 34, 
+                                h: 34,
+                                path: 'sprites/misc/fireball.png'
+                              }
     end
 
-    args.outputs.labels << args.state.fireball.each { |fireball| fireball[0] += speed + 2 }
+    args.state.fireballs.each do |fireball|
+      fireball.x += args.state.player.speed + 2
+    end
+
+    args.outputs.sprites << args.state.fireballs
   end
 
   def check_boundary
-    if (args.state.player_y + 100) == args.grid.top
-      args.state.player_y -= speed
+    if (args.state.player.y + 100) == args.grid.top
+      args.state.player.y -= speed
     end
 
-    if (args.state.player_x + 100) == args.grid.right
-      args.state.player_x -= speed
+    if (args.state.player.x + 100) == args.grid.right
+      args.state.player.x -= speed
     end
 
-    if (args.state.player_x - 50) == args.grid.left
-      args.state.player_x += speed
+    if (args.state.player.x - 50) == args.grid.left
+      args.state.player.x += speed
     end
 
-    if (args.state.player_y - 50) == args.grid.bottom
-      args.state.player_y += speed
+    if (args.state.player.y - 50) == args.grid.bottom
+      args.state.player.y += speed
     end
   end
 
   def handle_input
     if args.inputs.keyboard.right
-      args.state.player_x += speed
+      args.state.player.x += speed
     elsif args.inputs.keyboard.left
-      args.state.player_x -= speed
+      args.state.player.x -= speed
     end
 
     if args.inputs.keyboard.up
-      args.state.player_y += speed
+      args.state.player.y += speed
     elsif args.inputs.keyboard.down
-      args.state.player_y -= speed
+      args.state.player.y -= speed
     end
   end
 end
