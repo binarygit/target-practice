@@ -40,17 +40,15 @@
 #  args.state.rotation -= 1
 #end
 
-class Game
+class Player
   attr_reader :args, :speed
 
-  def initialize(args = nil)
+  def initialize(args)
     @args  = args
     @speed = 5
   end
 
-  def tick
-    args.state.player_x ||= 120
-    args.state.player_y ||= 280
+  def render
     args.state.player   ||= {
       x: 120,
       y: 280,
@@ -59,10 +57,57 @@ class Game
       speed: 2,
       path: 'sprites/misc/dragon-0.png'
     }
-
     args.outputs.sprites << args.state.player
     handle_input
     check_boundary
+  end
+
+  private
+
+  def check_boundary
+    if (args.state.player.y + 100) == args.grid.top
+      args.state.player.y -= speed
+    end
+
+    if (args.state.player.x + 100) == args.grid.right
+      args.state.player.x -= speed
+    end
+
+    if (args.state.player.x - 50) == args.grid.left
+      args.state.player.x += speed
+    end
+
+    if (args.state.player.y - 50) == args.grid.bottom
+      args.state.player.y += speed
+    end
+  end
+
+  def handle_input
+    if args.inputs.keyboard.right
+      args.state.player.x += speed
+    elsif args.inputs.keyboard.left
+      args.state.player.x -= speed
+    end
+
+    if args.inputs.keyboard.up
+      args.state.player.y += speed
+    elsif args.inputs.keyboard.down
+      args.state.player.y -= speed
+    end
+  end
+end
+
+class Game
+  attr_reader :args, :speed
+
+  def initialize(args = nil)
+    @args  = args
+    @speed = 5
+    @player = Player.new(args)
+  end
+
+  def tick
+    @player.render
     print_fireballs
     print_targets
     target_hit?
@@ -132,39 +177,6 @@ class Game
       end
     end
   end
-
-
-  def check_boundary
-    if (args.state.player.y + 100) == args.grid.top
-      args.state.player.y -= speed
-    end
-
-    if (args.state.player.x + 100) == args.grid.right
-      args.state.player.x -= speed
-    end
-
-    if (args.state.player.x - 50) == args.grid.left
-      args.state.player.x += speed
-    end
-
-    if (args.state.player.y - 50) == args.grid.bottom
-      args.state.player.y += speed
-    end
-  end
-
-  def handle_input
-    if args.inputs.keyboard.right
-      args.state.player.x += speed
-    elsif args.inputs.keyboard.left
-      args.state.player.x -= speed
-    end
-
-    if args.inputs.keyboard.up
-      args.state.player.y += speed
-    elsif args.inputs.keyboard.down
-      args.state.player.y -= speed
-    end
-  end
 end
 
 def tick(args)
@@ -172,4 +184,4 @@ def tick(args)
   game.tick
 end
 
-# $gtk.reset
+ $gtk.reset
