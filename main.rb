@@ -65,9 +65,21 @@ class Game
     check_boundary
     print_fireballs
     print_targets
+    target_hit?
   end
 
   private
+
+  def target_hit?
+    args.state.targets.each do |t|
+      args.state.fireballs.each do |f| 
+        if t.intersect_rect? f
+          f.kill = true
+          t.dead = true 
+        end
+      end
+    end
+  end
 
   def print_targets
     args.state.targets ||= [
@@ -75,7 +87,7 @@ class Game
       spawn_target(920, 600),
       spawn_target(1020, 320),
     ]
-
+    args.state.targets.reject! { _1.dead }
     args.outputs.sprites << args.state.targets
   end
 
@@ -104,6 +116,7 @@ class Game
       fireball.x += args.state.player.speed + 2
     end
 
+    args.state.fireballs.reject! { _1.dead }
     args.outputs.sprites << args.state.fireballs
   end
 
