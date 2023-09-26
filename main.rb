@@ -40,133 +40,9 @@
 #  args.state.rotation -= 1
 #end
 
-class Player
-  attr_reader :args, :speed
-
-  def initialize(args)
-    @args  = args
-    @speed = 5
-  end
-
-  def render
-    args.state.player   ||= {
-      x: 120,
-      y: 280,
-      w: 100,
-      h: 80,
-      speed: 2,
-      path: 'sprites/misc/dragon-0.png'
-    }
-    args.outputs.sprites << args.state.player
-    handle_input
-    check_boundary
-  end
-
-  private
-
-  def check_boundary
-    if (args.state.player.y + 100) == args.grid.top
-      args.state.player.y -= speed
-    end
-
-    if (args.state.player.x + 100) == args.grid.right
-      args.state.player.x -= speed
-    end
-
-    if (args.state.player.x - 50) == args.grid.left
-      args.state.player.x += speed
-    end
-
-    if (args.state.player.y - 50) == args.grid.bottom
-      args.state.player.y += speed
-    end
-  end
-
-  def handle_input
-    if args.inputs.keyboard.right
-      args.state.player.x += speed
-    elsif args.inputs.keyboard.left
-      args.state.player.x -= speed
-    end
-
-    if args.inputs.keyboard.up
-      args.state.player.y += speed
-    elsif args.inputs.keyboard.down
-      args.state.player.y -= speed
-    end
-  end
-end
-
-class Fireball
-  attr_reader :args
-
-  def initialize(args)
-    @args = args
-  end
-
-  def render
-    args.state.fireballs ||= []
-    if args.inputs.keyboard.key_down.z
-      args.state.fireballs << { x: (args.state.player.x + args.state.player.w) - 12,
-                                y: args.state.player.y + 10,
-                                w: 34, 
-                                h: 34,
-                                path: 'sprites/misc/fireball.png'
-      }
-    end
-    increase_fireball_speed
-    kill_offscreen_fireballs
-
-    args.state.fireballs.reject! { _1.dead }
-    args.outputs.sprites << args.state.fireballs
-  end
-
-  private
-
-  def increase_fireball_speed
-    args.state.fireballs.each do |fireball|
-      fireball.x += args.state.player.speed + 2
-    end
-  end
-
-  def kill_offscreen_fireballs
-    args.state.fireballs.each do |fireball|
-      if fireball.x > args.grid.w
-        fireball.dead = true
-      end
-    end
-  end
-end
-
-class Target
-  attr_reader :args
-
-  def initialize(args)
-    @args = args
-  end
-
-  def render
-    args.state.targets ||= [
-      spawn_target(800, 120),
-      spawn_target(920, 600),
-      spawn_target(1020, 320),
-    ]
-    args.state.targets.reject! { _1.dead }
-    args.outputs.sprites << args.state.targets
-  end
-
-  private
-
-  def spawn_target(x, y)
-    {
-      x: x,
-      y: y,
-      w: 64,
-      h: 64,
-      path: 'sprites/misc/target.png',
-    }
-  end
-end
+require_relative 'player.rb'
+require_relative 'fireball.rb'
+require_relative 'target.rb'
 
 class Game
   attr_reader :args, :speed
@@ -205,4 +81,4 @@ def tick(args)
   game.tick
 end
 
- $gtk.reset
+#$gtk.reset
