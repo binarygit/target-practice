@@ -9,20 +9,35 @@ class Target
 
   def render
     args.state.targets ||= [
-      spawn_target(800, 120),
-      spawn_target(920, 600),
-      spawn_target(1020, 320),
+      spawn_target,
+      spawn_target,
+      spawn_target,
     ]
     args.state.targets.reject! { _1.dead }
     args.outputs.sprites << args.state.targets
+    target_hit?
   end
 
   private
 
-  def spawn_target(x, y)
+  def target_hit?
+    args.state.targets.each do |t|
+      args.state.fireballs.each do |f| 
+        if t.intersect_rect? f
+          f.dead = true
+          t.dead = true 
+          args.state.targets << spawn_target
+          args.state.score += 1
+        end
+      end
+    end
+  end
+
+  def spawn_target
+    size = 64
     {
-      x: x,
-      y: y,
+      x: rand(args.grid.w * 0.4)        + args.grid.w * 0.6,
+      y: rand(args.grid.h - size * 2)   + size,
       w: 64,
       h: 64,
       path: 'sprites/misc/target.png',

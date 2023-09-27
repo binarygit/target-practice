@@ -56,29 +56,28 @@ class Game
   end
 
   def tick
+    args.state.score ||= 0
+    args.outputs.labels << {
+      x: 40,
+      y: args.grid.h - 40,
+      text: "Score: #{args.state.score}",
+      size_enum: 4
+    }
+
     @player.render
     @fireballs.render
     @targets.render
-    target_hit?
-  end
-
-  private
-
-  def target_hit?
-    args.state.targets.each do |t|
-      args.state.fireballs.each do |f| 
-        if t.intersect_rect? f
-          f.dead = true
-          t.dead = true 
-        end
-      end
-    end
   end
 end
 
 def tick(args)
   game ||= Game.new(args)
   game.tick
+  args.outputs.debug << {
+    x: 40,
+    y: args.grid.h - 80,
+    text: "Targets: #{args.state.targets.map { [_1[:x], _1[:y]] }}",
+  }.label!
 end
 
-#$gtk.reset
+$gtk.reset
