@@ -28,7 +28,7 @@ class Fireball
 
   def increase_fireball_speed
     args.state.fireballs.each do |fireball|
-      fireball.x += args.state.player.speed + 2
+      fireball.x += args.state.player.speed + 9
     end
   end
 
