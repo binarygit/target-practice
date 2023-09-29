@@ -56,7 +56,56 @@ class Game
   end
 
   def tick
+    args.state.timer ||= 30 * 60
+    unless game_over?
+      render_timer_and_score
+      @player.render
+      @fireballs.render
+      @targets.render
+    else
+      display_game_over_screen
+    end
+  end
+
+  private
+
+  def game_over?
+    args.state.timer < 0
+  end
+
+  def display_game_over_screen
+    labels = []
+    labels << {
+      x: 40,
+      y: args.grid.h - 40,
+      text: "Game Over!",
+      size_enum: 10,
+    }
+    labels << {
+      x: 40,
+      y: args.grid.h - 90,
+      text: "Score: #{args.state.score}",
+      size_enum: 4,
+    }
+    labels << {
+      x: 40,
+      y: args.grid.h - 132,
+      text: "Fire to restart",
+      size_enum: 2,
+    }
+    args.outputs.labels << labels
+
+    if args.inputs.keyboard.key_down.z ||
+        args.inputs.keyboard.key_down.j ||
+        args.inputs.controller_one.key_down.a
+      $gtk.reset
+    end
+  end
+
+  def render_timer_and_score
     args.state.score ||= 0
+
+    args.state.timer -= 1
     args.outputs.labels << {
       x: 40,
       y: args.grid.h - 40,
@@ -64,9 +113,12 @@ class Game
       size_enum: 4
     }
 
-    @player.render
-    @fireballs.render
-    @targets.render
+    args.outputs.labels << {
+      x: args.grid.w - 180,
+      y: args.grid.h - 40,
+      text: "Time left: #{(args.state.timer / 60).round}",
+      size_enum: 2
+    }
   end
 end
 
@@ -80,4 +132,4 @@ def tick(args)
   }.label!
 end
 
-$gtk.reset
+#$gtk.reset
