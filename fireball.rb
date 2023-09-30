@@ -16,6 +16,7 @@ class Fireball
                                 h: 34,
                                 path: 'sprites/misc/fireball.png'
       }
+      args.outputs.sounds << "sounds/fireball.wav"
     end
     increase_fireball_speed
     kill_offscreen_fireballs

@@ -24,6 +24,7 @@ class Target
     args.state.targets.each do |t|
       args.state.fireballs.each do |f| 
         if t.intersect_rect? f
+          args.outputs.sounds << "sounds/target.wav"
           f.dead = true
           t.dead = true 
           args.state.targets << spawn_target
