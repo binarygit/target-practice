@@ -137,6 +137,22 @@ def tick(args)
     y: args.grid.h - 80,
     text: "Targets: #{args.state.targets.map { [_1[:x], _1[:y]] }}",
   }.label!
+  args.outputs.solids << {
+    x: 0,
+    y: 0,
+    w: args.grid.w,
+    h: args.grid.h,
+    r: 92,
+    g: 120,
+    b: 230,
+  }
+  args.outputs.sprites << {
+    x: 500,
+    y: 500,
+    h: 100,
+    w: 100,
+    path: 'sprites/misc/cloud.png'
+  }
 end
 
 #$gtk.reset
