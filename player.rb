@@ -15,8 +15,9 @@ class Player
       w: 100,
       h: 80,
       speed: 2,
-      path: 'sprites/misc/dragon-0.png'
     }
+    player_sprite_index = 0.frame_index(count: 6, hold_for: 8, repeat: true)
+    args.state.player.path = "sprites/misc/dragon-#{player_sprite_index}.png"
     args.outputs.sprites << args.state.player
     handle_input
     check_boundary
