@@ -63,6 +63,10 @@ class Game
       @fireballs.render
       @targets.render
     else
+      unless args.audio[:music].paused
+        args.audio[:music].paused = true
+        args.outputs.sounds << "sounds/game-over.wav"
+      end
       display_game_over_screen
     end
   end
@@ -123,6 +127,9 @@ class Game
 end
 
 def tick(args)
+  if args.state.tick_count == 1
+    args.audio[:music] = { input: "sounds/flight.ogg", looping: true }
+  end
   game ||= Game.new(args)
   game.tick
   args.outputs.debug << {
